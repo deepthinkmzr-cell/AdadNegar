@@ -1,0 +1,11 @@
+{
+  "name": "عددنگار - عدد به حروف",
+  "short_name": "عددنگار",
+  "lang": "fa",
+  "dir": "rtl",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f3f7fa",
+  "theme_color": "#112b46",
+  "description": "تبدیل عدد به حروف در دری افغانستان، فارسی و انگلیسی"
+}

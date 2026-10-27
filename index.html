@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#112b46">
+  <title>عدد به حروف</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --navy: #112b46;
+      --navy-2: #1c4163;
+      --teal: #13a89e;
+      --teal-dark: #087f79;
+      --paper: #f3f7fa;
+      --card: #ffffff;
+      --ink: #1c2d3f;
+      --muted: #6c7d8d;
+      --line: #e1eaf0;
+      --shadow: 0 10px 30px rgba(17, 43, 70, .07);
+    }
+    * { box-sizing: border-box; }
+    html { min-height: 100%; background: var(--paper); }
+    body {
+      margin: 0;
+      font-family: Tahoma, Arial, sans-serif;
+      color: var(--ink);
+      background: radial-gradient(ellipse at 85% -10%, #d7f4ef 0, transparent 32%), var(--paper);
+      min-height: 100vh;
+    }
+    button, input { font: inherit; }
+    .topbar {
+      background: linear-gradient(135deg, var(--navy), var(--navy-2));
+      color: white;
+      padding: max(22px, env(safe-area-inset-top)) 20px 30px;
+      border-radius: 0 0 28px 28px;
+      box-shadow: 0 8px 25px rgba(17,43,70,.16);
+    }
+    .top-inner { width: min(760px, 100%); margin: 0 auto; }
+    .brand { display: flex; align-items: center; gap: 13px; }
+    .brand-icon {
+      width: 48px; height: 48px; border-radius: 16px; display: grid; place-items: center;
+      background: rgba(255,255,255,.13); border: 1px solid rgba(255,255,255,.18);
+      flex: 0 0 auto;
+    }
+    .brand-icon svg { width: 28px; height: 28px; }
+    h1 { margin: 0; font-size: 23px; font-weight: 800; letter-spacing: -.4px; }
+    .subtitle { margin: 6px 0 0; color: #d1e4f1; font-size: 13px; line-height: 1.8; }
+    .offline { display: inline-flex; align-items: center; gap: 7px; margin-top: 17px; color: #dffbf4; font-size: 12px; }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: #62e3bd; box-shadow: 0 0 0 4px rgba(98,227,189,.13); }
+    main { width: min(760px, 100%); margin: -12px auto 0; padding: 0 16px 32px; position: relative; }
+    .entry-card, .result-card { background: var(--card); border: 1px solid rgba(220,232,239,.9); box-shadow: var(--shadow); border-radius: 20px; }
+    .entry-card { padding: 21px; }
+    .field-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+    .field-label { font-size: 14px; font-weight: 800; color: var(--navy); }
+    .hint { color: var(--muted); font-size: 11px; }
+    .input-wrap { position: relative; }
+    input#numberInput {
+      display: block; width: 100%; min-width: 0; height: 58px; border: 1.5px solid #d9e5ed; border-radius: 14px;
+      color: var(--navy); background: #fbfdfe; padding: 0 15px 0 54px; direction: ltr; text-align: left;
+      font-size: 21px; font-weight: 700; letter-spacing: .3px; outline: none; transition: border-color .15s, box-shadow .15s;
+    }
+    input#numberInput:focus { border-color: var(--teal); box-shadow: 0 0 0 4px rgba(19,168,158,.12); }
+    .clear-btn { position: absolute; left: 9px; top: 9px; border: 0; border-radius: 10px; width: 40px; height: 40px; cursor: pointer; background: #edf3f6; color: #587083; display: grid; place-items: center; }
+    .clear-btn:active { transform: scale(.97); }
+    .number-preview { display: flex; justify-content: space-between; gap: 10px; align-items: center; margin-top: 10px; min-height: 18px; }
+    #formattedNumber { direction: ltr; text-align: left; color: var(--teal-dark); font-size: 12px; font-weight: 700; overflow-wrap: anywhere; }
+    #status { color: #b83f4c; font-size: 12px; line-height: 1.7; }
+    .section-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin: 25px 2px 13px; }
+    .section-head h2 { margin: 0; color: var(--navy); font-size: 17px; }
+    .section-head p { margin: 6px 0 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
+    .count-badge { flex: 0 0 auto; background: #e1f6f2; color: #087f79; padding: 7px 10px; font-size: 11px; font-weight: 800; border-radius: 999px; }
+    .results { display: grid; gap: 12px; }
+    .result-card { padding: 17px; overflow: hidden; }
+    .result-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 13px; }
+    .language { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .lang-symbol { display: grid; place-items: center; width: 37px; height: 37px; border-radius: 12px; font-size: 16px; font-weight: 800; flex: 0 0 auto; }
+    .lang-fa { background: #fff0df; color: #a85b18; }
+    .lang-da { background: #e9e7ff; color: #5750ad; }
+    .lang-en { background: #dff5f0; color: #087f79; font-size: 13px; }
+    .lang-title { margin: 0; font-size: 14px; color: var(--navy); font-weight: 800; }
+    .lang-sub { margin-top: 4px; color: var(--muted); font-size: 11px; }
+    .copy-btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; border: 1px solid #dbe8ee; background: #f8fbfc; color: #456074; padding: 9px 11px; border-radius: 11px; cursor: pointer; font-size: 12px; font-weight: 700; flex: 0 0 auto; }
+    .copy-btn svg { width: 15px; height: 15px; }
+    .copy-btn:active { background: #e8f6f3; border-color: #9bded5; }
+    .output { min-height: 29px; line-height: 2.05; color: #24394d; overflow-wrap: anywhere; word-break: normal; font-size: 16px; }
+    .output[dir="ltr"] { text-align: left; font-family: Arial, Tahoma, sans-serif; font-size: 15px; line-height: 1.9; }
+    .empty { color: #94a3af; }
+    .note { margin: 16px 3px 0; color: #748697; font-size: 11px; line-height: 1.9; }
+    footer { padding: 14px 18px max(20px, env(safe-area-inset-bottom)); text-align: center; color: #8696a4; font-size: 11px; }
+    .toast { position: fixed; bottom: max(25px, env(safe-area-inset-bottom)); left: 50%; transform: translate(-50%, 20px); opacity: 0; pointer-events: none; background: #173a55; color: white; padding: 12px 17px; border-radius: 12px; font-size: 13px; box-shadow: 0 8px 30px rgba(0,0,0,.2); transition: .2s; z-index: 10; white-space: nowrap; }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+    @media (min-width: 650px) {
+      .topbar { padding-left: 28px; padding-right: 28px; }
+      main { padding-left: 24px; padding-right: 24px; }
+      .results { grid-template-columns: 1fr; }
+      .entry-card { padding: 25px; }
+      .result-card { padding: 19px 21px; }
+    }
+    @media (max-width: 380px) {
+      .topbar { padding-left: 16px; padding-right: 16px; }
+      h1 { font-size: 21px; }
+      .entry-card { padding: 16px; }
+      .result-card { padding: 14px; }
+      .copy-btn { padding: 9px; }
+      .copy-btn span { display: none; }
+      .output { font-size: 15px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="top-inner">
+      <div class="brand">
+        <div class="brand-icon" aria-hidden="true">
+          <svg viewBox="0 0 32 32" fill="none"><rect x="4" y="3" width="24" height="26" rx="6" stroke="white" stroke-width="1.8"/><path d="M10 10h12M10 16h12M10 22h5" stroke="white" stroke-width="2.2" stroke-linecap="round"/><circle cx="22" cy="22" r="2" fill="#62e3bd"/></svg>
+        </div>
+        <div>
+          <h1>عدد به حروف</h1>
+          <p class="subtitle">یک عدد وارد کن؛ سه ترجمهٔ آماده تحویل بگیر.</p>
+        </div>
+      </div>
+      <div class="offline"><span class="dot"></span> کاملاً آفلاین · ساده و رایگان</div>
+    </div>
+  </header>
+
+  <main>
+    <section class="entry-card" aria-labelledby="entryTitle">
+      <div class="field-head">
+        <label class="field-label" id="entryTitle" for="numberInput">عدد مورد نظر</label>
+        <span class="hint">مثلاً 150000 یا ۱۵۰۰۰۰</span>
+      </div>
+      <div class="input-wrap">
+        <input id="numberInput" type="text" inputmode="numeric" autocomplete="off" autocapitalize="off" spellcheck="false" aria-describedby="status" value="150000" placeholder="عدد را اینجا وارد کن">
+        <button class="clear-btn" id="clearBtn" type="button" aria-label="پاک کردن عدد" title="پاک کردن">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="number-preview"><span id="formattedNumber">150,000</span><span id="status" role="status" aria-live="polite"></span></div>
+    </section>
+
+    <div class="section-head">
+      <div><h2>نتیجهٔ تبدیل</h2><p>هر بخش را جداگانه کپی کن.</p></div>
+      <span class="count-badge">۳ زبان</span>
+    </div>
+
+    <section class="results" aria-label="نتایج تبدیل">
+      <article class="result-card">
+        <div class="result-head">
+          <div class="language"><div class="lang-symbol lang-da">د</div><div><h3 class="lang-title">دری افغانستان</h3><div class="lang-sub">نگارش رایج در افغانستان</div></div></div>
+          <button class="copy-btn" type="button" data-copy="dari"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="8" y="8" width="12" height="13" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h3" stroke="currentColor" stroke-width="1.7"/></svg><span>کپی</span></button>
+        </div>
+        <div class="output" id="dariOutput" dir="rtl">یک‌صد و پنجاه هزار</div>
+      </article>
+
+      <article class="result-card">
+        <div class="result-head">
+          <div class="language"><div class="lang-symbol lang-fa">ف</div><div><h3 class="lang-title">فارسی</h3><div class="lang-sub">نگارش رایج فارسی</div></div></div>
+          <button class="copy-btn" type="button" data-copy="persian"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="8" y="8" width="12" height="13" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h3" stroke="currentColor" stroke-width="1.7"/></svg><span>کپی</span></button>
+        </div>
+        <div class="output" id="persianOutput" dir="rtl">صد و پنجاه هزار</div>
+      </article>
+
+      <article class="result-card">
+        <div class="result-head">
+          <div class="language"><div class="lang-symbol lang-en">EN</div><div><h3 class="lang-title">English</h3><div class="lang-sub">International English</div></div></div>
+          <button class="copy-btn" type="button" data-copy="english"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="8" y="8" width="12" height="13" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h3" stroke="currentColor" stroke-width="1.7"/></svg><span>Copy</span></button>
+        </div>
+        <div class="output" id="englishOutput" dir="ltr">one hundred fifty thousand</div>
+      </article>
+    </section>
+    <p class="note">اعداد بزرگ به‌صورت گروه‌های سه‌رقمی پردازش می‌شوند؛ بنابراین به محدودیت عددی معمول گوشی وابسته نیستند. برای مرتبه‌های بسیار بزرگی که نام رایج ندارند، شمارهٔ مرتبه نمایش داده می‌شود.</p>
+  </main>
+  <footer>عدد به حروف · بدون نیاز به اینترنت</footer>
+  <div id="toast" class="toast" role="status" aria-live="polite">کپی شد</div>
+
+<script>
+(function () {
+  'use strict';
+  const digitMap = {
+    '۰':'0','۱':'1','۲':'2','۳':'3','۴':'4','۵':'5','۶':'6','۷':'7','۸':'8','۹':'9',
+    '٠':'0','١':'1','٢':'2','٣':'3','٤':'4','٥':'5','٦':'6','٧':'7','٨':'8','٩':'9'
+  };
+  const persianUnits = ['', 'یک', 'دو', 'سه', 'چهار', 'پنج', 'شش', 'هفت', 'هشت', 'نه'];
+  const dariUnits = ['', 'یک', 'دو', 'سه', 'چهار', 'پنج', 'شش', 'هفت', 'هشت', 'نه'];
+  const englishUnits = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
+  const persianTeens = ['ده','یازده','دوازده','سیزده','چهارده','پانزده','شانزده','هفده','هجده','نوزده'];
+  const dariTeens = ['ده','یازده','دوازده','سیزده','چهارده','پانزده','شانزده','هفده','هجده','نوزده'];
+  const englishTeens = ['ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen'];
+  const persianTens = ['', '', 'بیست','سی','چهل','پنجاه','شصت','هفتاد','هشتاد','نود'];
+  const dariTens = ['', '', 'بیست','سی','چهل','پنجاه','شصت','هفتاد','هشتاد','نود'];
+  const englishTens = ['', '', 'twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety'];
+  const persianHundreds = ['', 'صد', 'دویست', 'سیصد', 'چهارصد', 'پانصد', 'ششصد', 'هفتصد', 'هشتصد', 'نهصد'];
+  const dariHundreds = ['', 'یک‌صد', 'دوصد', 'سه‌صد', 'چهارصد', 'پنج‌صد', 'شش‌صد', 'هفت‌صد', 'هشت‌صد', 'نه‌صد'];
+  const englishScales = ['', 'thousand', 'million', 'billion', 'trillion', 'quadrillion', 'quintillion', 'sextillion', 'septillion', 'octillion', 'nonillion', 'decillion', 'undecillion', 'duodecillion', 'tredecillion', 'quattuordecillion', 'quindecillion', 'sexdecillion', 'septendecillion', 'octodecillion', 'novemdecillion', 'vigintillion'];
+  const persianScales = ['', 'هزار', 'میلیون', 'میلیارد', 'تریلیون', 'کوادریلیون', 'کوینتیلیون', 'سکستیلیون', 'سپتیلیون', 'اکتیلیون', 'نانیلیون', 'دسیلیون', 'آندسیلیون', 'دودسیلیون', 'تریدسیلیون', 'کواتوردسیلیون', 'کویندسیلیون', 'سکسدسیلیون', 'سپتندسیلیون', 'اکتودسیلیون', 'نودسیلیون', 'ویجینتیلیون'];
+  const dariScales = ['', 'هزار', 'میلیون', 'میلیارد', 'تریلیون', 'کوادریلیون', 'کوینتیلیون', 'سکستیلیون', 'سپتیلیون', 'اکتیلیون', 'نانیلیون', 'دسیلیون', 'آندسیلیون', 'دودسیلیون', 'تریدسیلیون', 'کواتوردسیلیون', 'کویندسیلیون', 'سکسدسیلیون', 'سپتندسیلیون', 'اکتودسیلیون', 'نودسیلیون', 'ویجینتیلیون'];
+
+  const input = document.getElementById('numberInput');
+  const formatted = document.getElementById('formattedNumber');
+  const status = document.getElementById('status');
+  const outputs = {
+    dari: document.getElementById('dariOutput'),
+    persian: document.getElementById('persianOutput'),
+    english: document.getElementById('englishOutput')
+  };
+  const toast = document.getElementById('toast');
+  let toastTimer = null;
+
+  function normalize(raw) {
+    let s = String(raw || '').trim();
+    s = Array.from(s, ch => digitMap[ch] || ch).join('');
+    // Permit common visual grouping characters, but not decimal points or letters.
+    s = s.replace(/[\s,٬،_']/g, '');
+    if (s.startsWith('+')) s = s.slice(1);
+    if (!s) return { value: '', error: '' };
+    if (!/^\d+$/.test(s)) return { value: '', error: 'فقط عدد صحیح وارد کن.' };
+    s = s.replace(/^0+(?=\d)/, '');
+    return { value: s, error: '' };
+  }
+
+  function splitGroups(num) {
+    const groups = [];
+    for (let end = num.length; end > 0; end -= 3) {
+      groups.push(num.slice(Math.max(0, end - 3), end));
+    }
+    return groups;
+  }
+
+  function tripletWords(n, lang) {
+    if (n === 0) return '';
+    const units = lang === 'english' ? englishUnits : (lang === 'dari' ? dariUnits : persianUnits);
+    const teens = lang === 'english' ? englishTeens : (lang === 'dari' ? dariTeens : persianTeens);
+    const tens = lang === 'english' ? englishTens : (lang === 'dari' ? dariTens : persianTens);
+    const hundreds = lang === 'english' ? null : (lang === 'dari' ? dariHundreds : persianHundreds);
+    const words = [];
+    const h = Math.floor(n / 100);
+    const r = n % 100;
+    if (h) words.push(lang === 'english' ? units[h] + ' hundred' : hundreds[h]);
+    if (r >= 10 && r < 20) words.push(teens[r - 10]);
+    else {
+      const t = Math.floor(r / 10);
+      const u = r % 10;
+      if (t) words.push(tens[t]);
+      if (u) words.push(units[u]);
+    }
+    return lang === 'english' ? words.join(' ') : words.join(' و ');
+  }
+
+  function persianDigits(s) {
+    return String(s).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[Number(d)]);
+  }
+
+  function scaleFor(index, lang) {
+    if (index === 0) return '';
+    if (lang === 'english') return englishScales[index] || ('group of order ' + index);
+    const scales = lang === 'dari' ? dariScales : persianScales;
+    return scales[index] || ('مرتبهٔ ' + persianDigits(index));
+  }
+
+  function wordsFor(num, lang) {
+    if (/^0+$/.test(num)) return lang === 'english' ? 'zero' : 'صفر';
+    const groups = splitGroups(num);
+    const parts = [];
+    for (let i = groups.length - 1; i >= 0; i--) {
+      const n = Number(groups[i]);
+      if (!n) continue;
+      let piece = tripletWords(n, lang);
+      const scale = scaleFor(i, lang);
+      if (scale) piece += (lang === 'english' ? ' ' : ' ') + scale;
+      parts.push(piece);
+    }
+    return lang === 'english' ? parts.join(' ') : parts.join(' و ');
+  }
+
+  function prettyNumber(num) {
+    return num.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  }
+
+  function setEmpty() {
+    formatted.textContent = '';
+    Object.values(outputs).forEach(el => { el.textContent = 'نتیجه پس از واردکردن عدد نمایش داده می‌شود'; el.classList.add('empty'); el.dir = 'rtl'; });
+  }
+
+  function update() {
+    const normalized = normalize(input.value);
+    status.textContent = normalized.error;
+    if (normalized.error) {
+      formatted.textContent = '';
+      Object.values(outputs).forEach(el => { el.textContent = 'عدد معتبر نیست'; el.classList.add('empty'); });
+      return;
+    }
+    if (!normalized.value) { setEmpty(); return; }
+    const num = normalized.value;
+    formatted.textContent = prettyNumber(num);
+    outputs.dari.textContent = wordsFor(num, 'dari');
+    outputs.persian.textContent = wordsFor(num, 'persian');
+    outputs.english.textContent = wordsFor(num, 'english');
+    outputs.dari.dir = 'rtl';
+    outputs.persian.dir = 'rtl';
+    outputs.english.dir = 'ltr';
+    Object.values(outputs).forEach(el => el.classList.remove('empty'));
+  }
+
+  function showToast(message) {
+    toast.textContent = message;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 1700);
+  }
+
+  async function copyText(text) {
+    if (window.Android && typeof window.Android.copyText === 'function') {
+      window.Android.copyText(text);
+      showToast('متن کپی شد');
+      return;
+    }
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const helper = document.createElement('textarea');
+        helper.value = text;
+        helper.setAttribute('readonly', '');
+        helper.style.position = 'fixed'; helper.style.opacity = '0'; helper.style.left = '-10000px';
+        document.body.appendChild(helper); helper.select();
+        const ok = document.execCommand('copy'); helper.remove();
+        if (!ok) throw new Error('copy unavailable');
+      }
+      showToast('متن کپی شد');
+    } catch (e) {
+      showToast('کپی خودکار نشد؛ متن را انتخاب کن');
+    }
+  }
+
+  input.addEventListener('input', update);
+  document.getElementById('clearBtn').addEventListener('click', () => { input.value = ''; update(); input.focus(); });
+  document.querySelectorAll('[data-copy]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const key = btn.getAttribute('data-copy');
+      const txt = outputs[key].textContent;
+      if (!txt || outputs[key].classList.contains('empty') || status.textContent) { showToast('اول یک عدد معتبر وارد کن'); return; }
+      copyText(txt);
+    });
+  });
+  update();
+})();
+</script>
+</body>
+</html>
